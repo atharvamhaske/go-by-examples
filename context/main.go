@@ -27,32 +27,66 @@
 // 	http.HandleFunc("/hello", hello)
 // 	http.ListenAndServe(":8090", nil)
 // }
-// 
+//
 // example more below
 
+// package main
+
+// import (
+// 	"context"
+// 	"fmt"
+// 	"time"
+// )
+
+// func doWork(ctx context.Context) {
+// 	select {
+// 	case <-time.After(2 * time.Second):
+// 		fmt.Println("work done")
+// 	case <-ctx.Done():
+// 		fmt.Println("cancelled:", ctx.Err())
+// 	}
+// }
+
+// func main() {
+// 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+// 	defer cancel() //cancel the context to release resources when done
+
+// 	//start go routine to perform some processing
+// 	go doWork(ctx)
+
+// 	//wait for a few seconds to allow proccessing to complete
+// 	time.Sleep(3 * time.Second)
+// }
+
 package main
+
 import (
+	"time"
 	"context"
 	"fmt"
-	"time"
 )
 
-func doWork(ctx context.Context) {
-	select {
-		case <-time.After(2 * time.Second):
-		fmt.Println("work done")
-		case <-ctx.Done():
-		fmt.Println("cancelled:", ctx.Err())
-	}
-}
-
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 1 * time.Second)
-	defer cancel() //cancel the context to release resources when done
+	ctx, cancel := context.WithCancel(context.Background())
 	
-	//start go routine to perform some processing
-	go doWork(ctx)
+	go func(){
+		select {
+			case <-time.After(3 * time.Second):
+			fmt.Println("work done")
+			case <-ctx.Done(): // this waits untill someone cancels channel it returns c.done named channel internally once cancelled this case runs
+			//Because a receive on an unclosed, empty channel ALWAYS blocks.
+			fmt.Println("work cancelled")
+		}
+	}()
 	
-	//wait for a few seconds to allow proccessing to complete
+	time.Sleep(2 * time.Second)
+	cancel()
 	time.Sleep(3 * time.Second)
 }
+
+// ctx.Done() returns context’s internal done channel
+//<-ctx.Done() blocks until channel is CLOSED
+//cancel() closes the channel
+//Closing a channel wakes all waiting goroutines
+//Select chooses ctx.Done() case
+//The println runs immediately after wake-up
