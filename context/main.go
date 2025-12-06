@@ -90,3 +90,6 @@ func main() {
 //Closing a channel wakes all waiting goroutines
 //Select chooses ctx.Done() case
 //The println runs immediately after wake-up
+// 
+// 
+// will write blog on this all reminder to it
