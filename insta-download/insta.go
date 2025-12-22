@@ -38,7 +38,7 @@ func (a *App) nextFileIndex() int {
 
 func (a *App) StartDownload(username string) {
 	usr, _ := user.Current()
-	baseDir := fmt.Sprintf("%v/Downloads", usr.HomeDir)
+	baseDir := fmt.Sprintf("%v/Downloads/goInstagram", usr.HomeDir)
 
 	users, _, err := a.client.Users.Search(username, nil)
 	if err != nil {
@@ -62,7 +62,7 @@ func (a *App) StartDownload(username string) {
 	folder := fmt.Sprintf("[%s]%s", userID, username)
 	log.Println("Downloading:", folder)
 
-	a.FindPhotos(folder, user, baseDir)
+	a.FindPhotos(folder, username, baseDir)
 }
 
 func (a *App) FindPhotos(ownerFolder, userID, baseDir string) {
@@ -93,7 +93,7 @@ func (a *App) FindPhotos(ownerFolder, userID, baseDir string) {
 			MaxID: maxID,
 		}
 
-		media, pagination, error := a.client.Users.RecentMedia(userID, params)
+		media, pagination, err := a.client.Users.RecentMedia(userID, params)
 		if err != nil {
 			log.Println("Media error:", err)
 			break
@@ -161,3 +161,4 @@ func (a *App) DownloadWorker(destDir string, links chan string, wg *sync.WaitGro
 		}
 	}
 }
+
