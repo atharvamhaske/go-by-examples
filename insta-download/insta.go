@@ -58,59 +58,106 @@ func (a *App) StartDownload(username string) {
 		log.Println("user not found:", username)
 		return
 	}
-	
+
 	folder := fmt.Sprintf("[%s]%s", userID, username)
 	log.Println("Downloading:", folder)
-	
+
 	a.FindPhotos(folder, user, baseDir)
 }
 
 func (a *App) FindPhotos(ownerFolder, userID, baseDir string) {
 	dir := fmt.Sprintf("%v/%v", baseDir, ownerFolder)
-	
+
 	os.MkdirAll(dir, 0755)
-	
+
 	linkChan := make(chan string)
 	defer close(linkChan)
 	wg := new(sync.WaitGroup)
-	
+
 	//workers
 	workerCount := 2
 	for i := 0; i < workerCount; i++ {
 		wg.Add(1)
 		go a.DownloadWorker(dir, linkChan, wg)
 	}
-	
+
 	var next *instagram.ResponsePagination
-	
+
 	for {
-		maxID := "" {
-			if next != nil {
-				maxID = next.NextMaxID
-			}
-			params := &instagram.Parameters{
-				Count: 5,
-				MaxID: maxID,
-			}
-			
-			media, pagination, error := a.client.Users.RecentMedia(userID, params)
-			if err != nil {
-				log.Println("Media error:", err)
-				break
-			}
-			
-			next = pagination
-			
-			for _, m := range media {
-				linkChan <- m.Images.StandardResolution.URL
-			}
-			
-			if len(media) == 0 || next.NextMaxID = "" {
-				break
-			}
-			wg.Wait()
+		maxID := ""
+		if next != nil {
+			maxID = next.NextMaxID
 		}
+		params := &instagram.Parameters{
+			Count: 5,
+			MaxID: maxID,
+		}
+
+		media, pagination, error := a.client.Users.RecentMedia(userID, params)
+		if err != nil {
+			log.Println("Media error:", err)
+			break
+		}
+
+		next = pagination
+
+		for _, m := range media {
+			linkChan <- m.Images.StandardResolution.URL
+		}
+
+		if len(media) == 0 || next.NextMaxID == "" {
+			break
+		}
+		wg.Wait()
 	}
 }
 
-func (a *App) DownloadWorker()
+func (a *App) DownloadWorker(destDir string, links chan string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	for url := range links {
+		ext := ".jpg"
+		if strings.Contains(url, ".png") {
+			ext = ".png"
+		}
+
+		resp, err := http.Get(url)
+		if err != nil {
+			log.Println("http error:", err)
+			continue
+		}
+
+		img, _, err := image.Decode(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			log.Println("decode error:", err)
+			continue
+		}
+
+		b := img.Bounds()
+		if b.Dx() <= 300 || b.Dy() <= 300 {
+			continue
+		}
+
+		index := a.nextFileIndex()
+		name := fmt.Sprintf("pic%04d%s", index, ext)
+
+		out, err := os.Create(destDir + "/" + name)
+		if err != nil {
+			log.Println("file error:", err)
+			continue
+		}
+
+		if ext == ".png" {
+			png.Encode(out, img)
+		} else {
+			jpeg.Encode(out, img, nil)
+		}
+
+		out.Close()
+
+		if index%30 == 0 {
+			log.Println(index, "photos downloaded")
+		}
+	}
+}
