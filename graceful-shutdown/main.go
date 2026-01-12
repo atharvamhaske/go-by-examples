@@ -29,21 +29,21 @@ func main() {
 	quit := make(chan os.Signal, 1) // 1 isliye diya kyuki koi bhi signal miss na ho
 
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<- quit // program will wait here and will get block until we get shutdown signal, jab tak shutdown ka notification nahi ata
+	<-quit // program will wait here and will get block until we get shutdown signal, jab tak shutdown ka notification nahi ata
 
 	log.Println("\n Shutdown signal is received")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 15 * time.Second) //forever waiting stage me naa jaye isliye
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second) //forever waiting stage me naa jaye isliye
 	defer cancel()
 
 	//graceful shutdown:- nayi request accept nahi krna hai
 
-	if err := e.Shutdown(ctx)
-	err != nil {
+	if err := e.Shutdown(ctx); err != nil {
 		log.Fatal("Server forced shutdown", err)
 	}
 
 	log.Println("Server exited gracefully")
 }
-//til: Idiomatic Go prefers if err := ...; 
+
+//til: Idiomatic Go prefers if err := ...;
 //err != nil when the error is only needed locally, and a separate err := when the error must be reused.

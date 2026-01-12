@@ -8,7 +8,7 @@ type List struct {
 
 type Node struct {
 	value int
-	next *Node
+	next  *Node
 }
 
 func (l *List) Insert(v int) *List {
@@ -28,7 +28,7 @@ func (l *List) Sum() int {
 		fmt.Println("List is not created yett...")
 		return 0
 	}
-	
+
 	temp := l.head
 	sum := 0
 	for temp != nil {

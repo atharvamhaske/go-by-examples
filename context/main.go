@@ -61,24 +61,24 @@
 package main
 
 import (
-	"time"
 	"context"
 	"fmt"
+	"time"
 )
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
-	
-	go func(){
+
+	go func() {
 		select {
-			case <-time.After(3 * time.Second):
+		case <-time.After(3 * time.Second):
 			fmt.Println("work done")
-			case <-ctx.Done(): // this waits untill someone cancels channel it returns c.done named channel internally once cancelled this case runs
+		case <-ctx.Done(): // this waits untill someone cancels channel it returns c.done named channel internally once cancelled this case runs
 			//Because a receive on an unclosed, empty channel ALWAYS blocks.
 			fmt.Println("work cancelled")
 		}
 	}()
-	
+
 	time.Sleep(2 * time.Second)
 	cancel()
 	time.Sleep(3 * time.Second)
@@ -90,6 +90,6 @@ func main() {
 //Closing a channel wakes all waiting goroutines
 //Select chooses ctx.Done() case
 //The println runs immediately after wake-up
-// 
-// 
+//
+//
 // will write blog on this all reminder to it

@@ -31,11 +31,11 @@ func main() {
 	var x int32
 	done := make(chan struct{})
 
-	go func(){
-		atomic.AddInt32(&x,2)
+	go func() {
+		atomic.AddInt32(&x, 2)
 		close(done)
 	}()
 
-	<- done
+	<-done
 	fmt.Println("Value updated to:", x)
 }

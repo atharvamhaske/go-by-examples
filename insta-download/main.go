@@ -35,4 +35,5 @@ func main() {
 	log.Println("Server running on :8080")
 	e.Logger.Fatal(e.Start(":8080"))
 }
+
 //lol this api services were stopped by meta

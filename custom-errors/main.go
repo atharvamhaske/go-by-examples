@@ -28,7 +28,7 @@ func main() {
 		fmt.Println(ae.x)
 		fmt.Println(ae.msg)
 	} else {
-		
+
 		// fmt.Println("error dont match our custom error type")
 	}
 }

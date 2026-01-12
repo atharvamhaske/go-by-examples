@@ -7,7 +7,7 @@ import (
 
 func foo(x int) (int, error) {
 	if x == 42 {
-		return  -1, errors.New("cant work with 42")
+		return -1, errors.New("cant work with 42")
 	}
 	return x + 3, nil
 }
@@ -24,7 +24,7 @@ func makeTea(arg int) error {
 	return nil
 }
 
-func main () {
+func main() {
 	for _, i := range []int{7, 42} {
 		if r, e := foo(i); e != nil {
 			fmt.Println("foo failed", e)
@@ -32,7 +32,7 @@ func main () {
 			fmt.Println("foo worked", r)
 		}
 	} // here if we have for x, y then x is here index and y is value
-	
+
 	for i := range 5 {
 		if err := makeTea(i); err != nil {
 			if errors.Is(err, ErroutOfTea) {

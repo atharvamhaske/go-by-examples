@@ -3,14 +3,14 @@ package main
 import "fmt"
 
 func main() {
-    var data int
-    go func() {
-        data++
-    }()
+	var data int
+	go func() {
+		data++
+	}()
 
-    if data == 0 {
-        fmt.Printf("the value is %d", data)
-    }
+	if data == 0 {
+		fmt.Printf("the value is %d", data)
+	}
 }
 
 // Race condition occur when two or more operations must execute in the correct order,

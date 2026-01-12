@@ -6,15 +6,15 @@ func main() {
 	s := []int{}
 
 	fmt.Println(len(s)) // 0 initially
-	fmt.Println(cap(s))// this too 0 initially
+	fmt.Println(cap(s)) // this too 0 initially
 
 	s = append(s, 1, 2, 3)
 
 	fmt.Println(len(s))
 	fmt.Println(cap(s))
 
-	slice := make([]int, 5, 10) 
-    fmt.Println(cap(slice)) // Output: 10
+	slice := make([]int, 5, 10)
+	fmt.Println(cap(slice)) // Output: 10
 	fmt.Println(len(slice))
 
 	a := sumofArr([]int{1, 2, 3})

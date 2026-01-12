@@ -1,4 +1,5 @@
 package main
+
 //in go abstraction is acheived using interfaces, as that interface is set of collection of methods and not
 //the actual implementation of them.
 
@@ -11,9 +12,9 @@ type File interface {
 }
 
 type MyFile struct {
-	name string
+	name    string
 	content string
-}// har ek file ke pass uska name and content hoga thats how we defined struct here for File
+} // har ek file ke pass uska name and content hoga thats how we defined struct here for File
 
 // now writing actual implmentation of these above ops like readfile and all
 
@@ -41,4 +42,3 @@ func main() {
 
 //In Go, an identifier is exported if it begins with an uppercase letter, making it accessible from other packages. {Encapsulation}
 //Now Polymorphism
-

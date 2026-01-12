@@ -161,4 +161,3 @@ func (a *App) DownloadWorker(destDir string, links chan string, wg *sync.WaitGro
 		}
 	}
 }
-
